@@ -1,0 +1,59 @@
+- name: AdGuard Unbound
+  icon: 🛡️
+  description: Network-wide ad blocking and privacy protection
+  url: http://adguard.buildtest.dev
+  
+- name: Bytestash
+  icon: 📦
+  description: Lightweight file storage and management system
+  url: http://bytestash.buildtest.dev
+
+- name: CyberChef
+  icon: 👨‍🍳
+  description: The cyber Swiss Army knife for data operations
+  url: http://cyberchef.buildtest.dev
+
+- name: Dozzle
+  icon: 📋
+  description: Real-time Docker container log viewer
+  url: http://dozzle.buildtest.dev
+
+- name: Ghost
+  icon: 👻
+  description: Professional publishing platform and CMS
+  url: http://localghost.buildtest.dev
+
+- name: LAN Speed Test
+  icon: ⚡
+  description: Network speed testing and performance monitoring
+  url: http://lanspeedtest.buildtest.dev
+
+- name: MariaDB
+  icon: 🗄️
+  description: High-performance relational database server
+  url: http://mariadb.buildtest.dev
+
+- name: Nginx Proxy Manager
+  icon: 🔀
+  description: Easy SSL certificates and reverse proxy management
+  url: http://nginxproxymanager.buildtest.dev
+
+- name: phpMyAdmin
+  icon: 🐘
+  description: MySQL/MariaDB database administration tool
+  url: http://phpmyadmin.buildtest.dev
+
+- name: ProjectSend
+  icon: 📤
+  description: Self-hosted file sharing and client management
+  url: http://projectsend.buildtest.dev
+
+- name: Speedtest Tracker
+  icon: 🐰
+  description: Automated internet speed testing and history tracking
+  url: http://speedtest-tracker.buildtest.dev
+
+- name: UptimeKuma
+  icon: 🐻
+  description: Self-hosted monitoring and status page solution
+  url: http://uptimekuma.buildtest.dev

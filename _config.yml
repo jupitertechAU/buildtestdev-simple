@@ -1,0 +1,32 @@
+# Site settings
+title: 🐳 BuildTest.dev
+description: >-
+  Where DevSecOps Dreams Come True... Or Crash Spectacularly! 🚀💥  
+baseurl: "/buildtestdev-simple"
+url: "https://jupitertechau.github.io"
+
+# Build settings
+theme: minima
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Don't expose development files to public website
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - README.md
+  - LICENSE
+  - CHANGELOG.md
+  - "*.sh"
+  - "*.log"
+  - .git/
+  - .gitignore
+  - .bundle/
+  - scripts/
