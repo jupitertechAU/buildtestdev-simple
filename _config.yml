@@ -2,8 +2,8 @@
 title: 🐳 BuildTest.dev
 description: >-
   Where DevSecOps Dreams Come True... Or Crash Spectacularly! 🚀💥  
-baseurl: "/buildtestdev-simple"
-url: "https://jupitertechau.github.io"
+baseurl: ""
+url: "https://buildtest.dev"
 
 # Build settings
 theme: minima
