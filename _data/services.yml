@@ -1,59 +1,191 @@
-- name: AdGuard Unbound
-  icon: 🛡️
-  description: Network-wide ad blocking and privacy protection
-  url: http://adguard.buildtest.dev
-  
-- name: Bytestash
-  icon: 📦
-  description: Lightweight file storage and management system
-  url: http://bytestash.buildtest.dev
+categories:
+  - name: Monitoring & Analytics
+    services:
+      - name: UptimeKuma
+        icon: 🐻
+        description: Self-hosted monitoring and status page solution
+        url: http://uptimekuma.buildtest.dev
+      
+      - name: Dozzle
+        icon: 📋
+        description: Real-time Docker container log viewer
+        url: http://dozzle.buildtest.dev
+      
+      - name: Grafana
+        icon: 📊
+        description: Analytics and interactive visualisation platform
+        url: http://grafana.buildtest.dev
+      
+      - name: GoAccess NPM Logs
+        icon: 📈
+        description: Real-time web log analyser and interactive viewer
+        url: http://goaccess.buildtest.dev
+      
+      - name: Telegraf
+        icon: 📡
+        description: Agent for collecting and reporting metrics
+        url: http://telegraf.buildtest.dev
 
-- name: CyberChef
-  icon: 👨‍🍳
-  description: The cyber Swiss Army knife for data operations
-  url: http://cyberchef.buildtest.dev
+  - name: Network & Security
+    services:
+      - name: AdGuard Unbound
+        icon: 🛡️
+        description: Network-wide ad blocking and privacy protection
+        url: http://adguard.buildtest.dev
+      
+      - name: Nginx Proxy Manager
+        icon: 🔀
+        description: Easy SSL certificates and reverse proxy management
+        url: http://nginxproxymanager.buildtest.dev
+      
+      - name: Authelia
+        icon: 🔐
+        description: Single sign-on and two-factor authentication portal
+        url: http://authelia.buildtest.dev
+      
+      - name: DumbWhoIs
+        icon: 🔍
+        description: Simple WHOIS lookup and domain information tool
+        url: http://whois.buildtest.dev
 
-- name: Dozzle
-  icon: 📋
-  description: Real-time Docker container log viewer
-  url: http://dozzle.buildtest.dev
+  - name: Databases & Data Storage
+    services:
+      - name: MariaDB
+        icon: 🗄️
+        description: High-performance relational database server
+        url: http://mariadb.buildtest.dev
+      
+      - name: PostgreSQL 15
+        icon: 🐘
+        description: Advanced open-source relational database
+        url: http://postgresql.buildtest.dev
+      
+      - name: InfluxDB
+        icon: ⏱️
+        description: Time series database for metrics and events
+        url: http://influxdb.buildtest.dev
+      
+      - name: Baserow
+        icon: 📊
+        description: Open-source no-code database and Airtable alternative
+        url: http://baserow.buildtest.dev
+      
+      - name: Redis
+        icon: 🔴
+        description: In-memory data structure store and cache (Internal only)
 
-- name: Ghost
-  icon: 👻
-  description: Professional publishing platform and CMS
-  url: http://localghost.buildtest.dev
+  - name: Database Management Tools
+    services:
+      - name: phpMyAdmin
+        icon: 🐘
+        description: MySQL/MariaDB database administration tool
+        url: http://phpmyadmin.buildtest.dev
+      
+      - name: pgAdmin 4
+        icon: 🐘
+        description: PostgreSQL database administration and management
+        url: http://pgadmin.buildtest.dev
+      
+      - name: CloudBeaver
+        icon: 🌐
+        description: Cloud database manager for SQL and NoSQL databases
+        url: http://cloudbeaver.buildtest.dev
 
-- name: LAN Speed Test
-  icon: ⚡
-  description: Network speed testing and performance monitoring
-  url: http://lanspeedtest.buildtest.dev
+  - name: Content Management & Publishing
+    services:
+      - name: Ghost
+        icon: 👻
+        description: Professional publishing platform and CMS
+        url: http://localghost.buildtest.dev
+      
+      - name: WordPress
+        icon: 📝
+        description: Popular content management system and blogging platform
+        url: http://localpress.buildtest.dev
+      
+      - name: Hugo
+        icon: ⚡
+        description: Fast static site generator development server
+        url: http://hugo.buildtest.dev
+      
+      - name: Paperless-ngx
+        icon: 🗂️
+        description: Document management system with OCR and search
+        url: http://paperless.buildtest.dev
 
-- name: MariaDB
-  icon: 🗄️
-  description: High-performance relational database server
-  url: http://mariadb.buildtest.dev
+  - name: File Management & Sharing
+    services:
+      - name: ProjectSend
+        icon: 📤
+        description: Self-hosted file sharing and client management
+        url: http://projectsend.buildtest.dev
+      
+      - name: Bytestash
+        icon: 📦
+        description: Lightweight file storage and management system
+        url: http://bytestash.buildtest.dev
 
-- name: Nginx Proxy Manager
-  icon: 🔀
-  description: Easy SSL certificates and reverse proxy management
-  url: http://nginxproxymanager.buildtest.dev
+  - name: Document Processing & Tools
+    services:
+      - name: Draw.io
+        icon: ✏️
+        description: Online diagramming and flowchart creation tool
+        url: http://drawio.buildtest.dev
+      
+      - name: Apache Tika Server
+        icon: 📄
+        description: Content analysis and text extraction server (Internal only)
+      
+      - name: Gotenberg
+        icon: 📑
+        description: Docker-powered stateless API for PDF conversion (Internal only)
+      
+      - name: OCRmyPDF Auto
+        icon: 🔤
+        description: Automated OCR processing for PDF documents (Internal only)
 
-- name: phpMyAdmin
-  icon: 🐘
-  description: MySQL/MariaDB database administration tool
-  url: http://phpmyadmin.buildtest.dev
+  - name: Development & Utilities
+    services:
+      - name: CyberChef
+        icon: 👨‍🍳
+        description: The cyber Swiss Army knife for data operations
+        url: http://cyberchef.buildtest.dev
+      
+      - name: Heimdall
+        icon: 🏠
+        description: Application dashboard and launcher
+        url: http://heimdall.buildtest.dev
+      
+      - name: Ghostboard Server
+        icon: 👥
+        description: Anonymous feedback and suggestion board
+        url: http://ghostboard.buildtest.dev
 
-- name: ProjectSend
-  icon: 📤
-  description: Self-hosted file sharing and client management
-  url: http://projectsend.buildtest.dev
+  - name: Testing & Performance
+    services:
+      - name: LAN Speed Test
+        icon: ⚡
+        description: Network speed testing and performance monitoring
+        url: http://lanspeedtest.buildtest.dev
+      
+      - name: Speedtest Tracker
+        icon: 🐰
+        description: Automated internet speed testing and history tracking
+        url: http://speedtest-tracker.buildtest.dev
+      
+      - name: DiskSpeed
+        icon: 💾
+        description: Disk performance testing and benchmarking tool
+        url: http://diskspeed.buildtest.dev
 
-- name: Speedtest Tracker
-  icon: 🐰
-  description: Automated internet speed testing and history tracking
-  url: http://speedtest-tracker.buildtest.dev
-
-- name: UptimeKuma
-  icon: 🐻
-  description: Self-hosted monitoring and status page solution
-  url: http://uptimekuma.buildtest.dev
+  - name: Media & Entertainment
+    services:
+      - name: Plex
+        icon: 🎬
+        description: Media server for streaming movies, TV shows, and music
+        url: http://plex.buildtest.dev
+      
+      - name: YTPTube
+        icon: 📺
+        description: YouTube playback and download tool
+        url: http://ytptube.buildtest.dev
