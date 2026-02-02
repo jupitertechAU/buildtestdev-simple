@@ -1,0 +1,313 @@
+---
+layout: splash
+author_profile: false
+---
+
+<style>
+/* Base */
+body {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.page,
+.page__inner-wrap {
+  background: transparent;
+}
+
+/* Hide theme elements */
+.skip-links {
+  display: none;
+}
+
+.masthead {
+  display: none;
+}
+
+.page__footer {
+  display: none;
+}
+
+/* Container */
+.app-container {
+  padding: 2rem 1rem;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0;
+}
+
+/* Category Cards */
+.category-section {
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 1rem 1.5rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.category-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: none;
+  border: none;
+  background: transparent;
+}
+
+/* App Grid */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 2rem 1.5rem;
+  padding: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .app-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* App Items */
+.app-item {
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.app-item:hover {
+  transform: scale(1.08);
+}
+
+/* App Icons */
+.app-icon {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 0.5rem;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.app-item:hover .app-icon {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 12px 28px rgba(0,0,0,0.4);
+}
+
+/* App Names */
+.app-name {
+  font-size: 0.813rem;
+  font-weight: 500;
+  color: #fff;
+  max-width: 90px;
+  line-height: 1.2;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Tooltips */
+.app-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  min-width: 150px;
+  max-width: 250px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.app-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.95);
+}
+
+.app-item:hover .app-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Disabled State */
+.app-item.disabled .app-icon {
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+.app-item.disabled .app-name {
+  opacity: 0.4;
+}
+
+/* Search Bar */
+.search-bar {
+  background: rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 0.875rem 1.25rem;
+  margin: 0 0 2rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.search-bar input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  width: 100%;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+/* Page Indicators */
+.page-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 3rem 0 2rem;
+}
+
+.page-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s;
+}
+
+.page-dot.active {
+  background: rgba(255,255,255,0.9);
+  width: 24px;
+  border-radius: 4px;
+}
+</style>
+
+<div class="app-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1 class="hero-title">
+      {% if site.logo %}
+      <img src="{{ site.baseurl }}{{ site.logo }}" alt="{{ site.title }} icon" style="width: 2.5rem; height: 2.5rem; vertical-align: middle; margin-right: 0.5rem;">
+      {% endif %}
+      {{ site.title }}
+    </h1>
+    <p class="hero-description">{{ site.description }}</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" placeholder="🔍 Search" id="appSearch">
+  </div>
+
+  {% for category in site.data.services.categories %}
+  <div class="category-section">
+    <h2 class="category-title">{{ category.name }}</h2>
+    
+    <div class="app-grid">
+      {% for service in category.services %}
+      {% if service.url %}
+      <a href="{{ service.url }}" class="app-item" target="_blank" data-name="{{ service.name | downcase }}" data-desc="{{ service.description | downcase }}">
+        <div class="app-icon">
+          <img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy">
+        </div>
+        <div class="app-name">{{ service.name }}</div>
+        <div class="app-tooltip">{{ service.description }}</div>
+      </a>
+      {% else %}
+      <div class="app-item disabled" data-name="{{ service.name | downcase }}" data-desc="{{ service.description | downcase }}">
+        <div class="app-icon">
+          <img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy">
+        </div>
+        <div class="app-name">{{ service.name }}</div>
+        <div class="app-tooltip">{{ service.description }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="page-indicators">
+    <div class="page-dot active"></div>
+    <div class="page-dot"></div>
+    <div class="page-dot"></div>
+  </div>
+</div>
+
+<script>
+const searchInput = document.getElementById('appSearch');
+const appItems = document.querySelectorAll('.app-item');
+const categorySections = document.querySelectorAll('.category-section');
+
+searchInput.addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  
+  appItems.forEach(app => {
+    const name = app.dataset.name || '';
+    const desc = app.dataset.desc || '';
+    const matches = name.includes(searchTerm) || desc.includes(searchTerm);
+    app.style.display = matches ? 'flex' : 'none';
+  });
+  
+  categorySections.forEach(section => {
+    const visibleApps = section.querySelectorAll('.app-item[style="display: flex;"], .app-item:not([style])');
+    section.style.display = visibleApps.length > 0 ? 'block' : 'none';
+  });
+});
+</script>

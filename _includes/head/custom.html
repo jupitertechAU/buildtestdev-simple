@@ -1,0 +1,27 @@
+<!-- start custom head snippets -->
+<!-- Favicons -->
+<link rel="icon" type="image/png" href="{{ site.baseurl }}/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="{{ site.baseurl }}/favicon.svg" />
+<link rel="shortcut icon" href="{{ site.baseurl }}/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="{{ site.baseurl }}/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="{{ site.title }}" />
+
+{% if site.pwa.enabled %}
+<!-- PWA Meta Tags -->
+<meta name="theme-color" content="{{ site.pwa.theme_color }}">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="{{ site.name }}">
+<link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ site.pwa.icon_192 | relative_url }}">
+<link rel="icon" type="image/png" sizes="512x512" href="{{ site.pwa.icon_512 | relative_url }}">
+{% else %}
+<link rel="manifest" href="{{ site.baseurl }}/site.webmanifest" />
+{% endif %}
+<!-- end custom head snippets -->
+
+<!-- Block all search engines -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet">

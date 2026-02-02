@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "dev.buildtest.twa",
+    "sha256_cert_fingerprints": ["22:1E:07:3C:DA:41:1C:21:51:4A:3E:15:C3:0F:09:2C:E3:D3:8C:82:98:81:2B:02:C9:B3:4F:1D:1E:BF:04:10"]
+  }
+}]

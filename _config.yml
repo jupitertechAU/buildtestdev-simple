@@ -1,0 +1,112 @@
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+minimal_mistakes_skin: "dark"
+locale: "en-AU"
+logo: "/favicon-96x96.png"
+title: "BuildTest.dev"
+title_separator: "-"
+name: "BuildTest.dev"
+description: "Where DevSecOps dreams come true... or crash spectacularly! 🚀💥"
+url: "https://buildtest.dev"
+baseurl: ""
+repository: "jupitertechAU/buildtestdev-simple"
+comments:
+  provider: false
+atom_feed:
+  hide: true
+search: false
+analytics:
+  provider: false
+footer:
+  links:
+include:
+  - .htaccess
+  - _pages
+  - .well-known
+exclude:
+  - "*.sublime-project"
+  - "*.sublime-workspace"
+  - vendor
+  - .asset-cache
+  - .bundle
+  - .jekyll-assets-cache
+  - .sass-cache
+  - assets/js/plugins
+  - assets/js/_main.js
+  - assets/js/vendor
+  - Capfile
+  - CHANGELOG
+  - CHANGELOG.md
+  - config
+  - Gemfile
+  - Gemfile.lock
+  - Gruntfile.js
+  - gulpfile.js
+  - LICENSE
+  - log
+  - minimal-mistakes-jekyll.gemspec
+  - node_modules
+  - package.json
+  - package-lock.json
+  - Rakefile
+  - README
+  - README.md
+  - tmp
+  - /docs
+  - /test
+  - "*.sh"
+  - "*.log"
+  - .git/
+  - .gitignore
+  - scripts/
+  - gemfiles/
+keep_files:
+  - .git
+  - .svn
+encoding: "utf-8"
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+markdown: kramdown
+highlighter: rouge
+lsi: false
+excerpt_separator: "\n\n"
+incremental: false
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  enable_coderay: false
+sass:
+  sass_dir: _sass
+  style: compressed
+permalink: /:categories/:title/
+plugins:
+  - jekyll-include-cache
+whitelist:
+  - jekyll-include-cache
+compress_html:
+  clippings: all
+  ignore:
+    envs: development
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: false
+      read_time: false
+      comments: false
+      share: false
+      related: false
+robots: noindex, nofollow
+# PWA Settings
+pwa:
+  enabled: true
+  theme_color: "#007bff"
+  background_color: "#ffffff"
+  icon_192: "/assets/images/maskable_icon_x192.png"
+  icon_512: "/assets/images/maskable_icon_x512.png"
+  cache_version: "v2"
