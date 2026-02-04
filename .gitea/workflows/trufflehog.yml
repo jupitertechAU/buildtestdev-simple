@@ -16,9 +16,4 @@ jobs:
         run: |
           docker run --rm -v "$PWD:/scan" \
             ghcr.io/trufflesecurity/trufflehog:latest \
-            git file:///scan/ \
-            --since-commit ${{ github.event.pull_request.base.sha }} \
-            --branch ${{ github.event.pull_request.head.sha }} \
-            --fail \
-            --only-verified \
-            --no-update
+            filesystem /scan --fail --only-verified
