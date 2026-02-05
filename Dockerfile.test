@@ -1,0 +1,3 @@
+FROM nginx:latest
+USER root
+RUN chmod 777 /etc/passwd
