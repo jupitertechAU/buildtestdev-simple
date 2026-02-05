@@ -37,7 +37,7 @@ graph LR
 | Feature | Description |
 |---------|-------------|
 | **Security Gate** | Gitea acts as private security checkpoint before public release |
-| **Auto Scanning** | TruffleHog + Gitleaks detect secrets automatically |
+| **Auto Scanning** | Trivy detects secrets, vulnerabilities, and misconfigurations |
 | **Smart Cache** | Cloudflare cache purges on deployment |
 | **Manual Control** | No automatic public deployments |
 | **Git Hooks** | Automated dev branch pushes |
@@ -107,18 +107,20 @@ graph LR
 # Stage 2: Security Gate
 ┌─────────────────────────────────────┐
 │ 5. Create PR: dev → main            │
-│ 6. TruffleHog scans for secrets     │
-│ 7. Gitleaks scans for credentials   │
-│ 8. Review & approve if clean        │
-│ 9. Merge to Gitea main              │
+│ 6. Trivy scans for:                 │
+│    • Secrets & credentials          │
+│    • Dependency vulnerabilities     │
+│    • Configuration issues           │
+│ 7. Review & approve if clean        │
+│ 8. Merge to Gitea main              │
 └─────────────────────────────────────┘
                  ↓
 # Stage 3: Public Deployment
 ┌─────────────────────────────────────┐
-│ 10. Manual push to GitHub           │
-│ 11. GitHub Actions purges CF cache  │
-│ 12. GitHub Pages deploys            │
-│ 13. Live on buildtest.dev           │
+│ 9. Manual push to GitHub            │
+│ 10. GitHub Actions purges CF cache  │
+│ 11. GitHub Pages deploys            │
+│ 12. Live on buildtest.dev           │
 └─────────────────────────────────────┘
 ```
 
@@ -156,8 +158,12 @@ graph LR
 
 | Tool | Purpose | Trigger | Action |
 |------|---------|---------|--------|
-| **TruffleHog** | Detects API keys, tokens, secrets | Every PR to `main` | Block merge if found |
-| **Gitleaks** | Scans for hardcoded credentials | Every PR to `main` | Block merge if found |
+| **Trivy** | Comprehensive security scanner | Every PR to `main` | Block merge if HIGH/CRITICAL issues found |
+
+**Trivy Scans For:**
+- **Secrets:** API keys, tokens, passwords, credentials
+- **Vulnerabilities:** Known CVEs in dependencies (Gemfile.lock)
+- **Misconfigurations:** Docker, IaC, and security config issues
 
 ### Security Workflow
 
@@ -173,8 +179,10 @@ graph LR
          │
          ▼
 ┌──────────────────┐
-│ TruffleHog Scan  │
-│  Gitleaks Scan   │
+│   Trivy Scan:    │
+│  • Secrets       │
+│  • Vulnerabilities│
+│  • Misconfig     │
 └────────┬─────────┘
          │
     ┌────┴────┐
@@ -196,6 +204,7 @@ graph LR
 - **Approval Required** — Minimum 1 reviewer must approve
 - **Private Gate** — Gitea reviews before public GitHub
 - **Manual Control** — No automatic GitHub mirroring
+- **Comprehensive Scanning** — Secrets, dependencies, and configurations checked
 
 </details>
 
@@ -216,16 +225,24 @@ graph LR
 <details>
 <summary><b>Security Scanning Workflow</b></summary>
 
-**File:** `.gitea/workflows/security-scan.yml`
+**File:** `.gitea/workflows/trivy-scan.yml`
 
 **Triggers:** Pull requests to `main` branch
 
 **Actions:**
 - Checkout code
-- Run TruffleHog filesystem scan
-- Run Gitleaks via Docker
+- Run Trivy comprehensive scan
+  - Secret detection
+  - Dependency vulnerability scanning
+  - Misconfiguration detection
 - Report results
-- Block merge if issues found
+- Block merge if HIGH or CRITICAL issues found
+
+**Scan Coverage:**
+- All repository files
+- `Gemfile.lock` for gem vulnerabilities
+- Configuration files for security issues
+- Detects exposed credentials and API keys
 
 </details>
 
@@ -406,8 +423,8 @@ origin  https://github.com/jupitertechAU/repo.git (push)
 <details open>
 <summary><b>Security (4/4)</b></summary>
 
-- [x] Implement automated security scanning (TruffleHog + Gitleaks)
-- [x] Configure security scans on pull requests
+- [x] Implement comprehensive security scanning with Trivy
+- [x] Configure automated scans on pull requests
 - [x] Set up Gitea as security gate before public mirror
 - [x] Establish manual deployment control to prevent auto-leaks
 
@@ -427,13 +444,10 @@ origin  https://github.com/jupitertechAU/repo.git (push)
 <details>
 <summary><b>Security Enhancements (5 items)</b></summary>
 
-- [ ] Test security scanners with sample credentials
-- [ ] Verify detection of hardcoded secrets and API keys
+- [ ] Test Trivy scanner with sample credentials
+- [ ] Verify detection of secrets, vulnerabilities, and misconfigurations
 - [ ] Audit historical commits for accidentally leaked credentials
 - [ ] Document secret rotation procedures
 - [ ] Create security incident response plan
 
 </details>
-Test workflow update - Wed Feb  4 01:15:57 PM UTC 2026
-
-Test workflow update - Wed Feb  4 01:19:42 PM UTC 2026
