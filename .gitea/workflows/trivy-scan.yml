@@ -1,13 +1,11 @@
-name: Security Scan
+name: Security Scan (cached)
 on:
-  push:
-    branches:
-      - dev
   pull_request:
     branches:
       - main
+
 jobs:
-  security:
+  security-scan:
     runs-on: ubuntu-latest
     
     steps:
@@ -16,16 +14,11 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Debug - List files
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Files in current directory:"
-          ls -la
-          
+      - name: Install Trivy CLI
+        uses: ankurk91/install-trivy-cli-action@v2
+        with:
+          version: latest
+          cache: true
+      
       - name: Trivy comprehensive scan
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/scan aquasec/trivy:latest \
-            fs --scanners vuln,secret,misconfig \
-            --exit-code 1 \
-            /scan
+        run: trivy fs . --scanners vuln,secret,misconfig --exit-code 1
