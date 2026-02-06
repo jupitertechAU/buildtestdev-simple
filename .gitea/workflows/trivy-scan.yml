@@ -1,5 +1,8 @@
 name: Security Scan
 on:
+  push:
+    branches:
+      - dev
   pull_request:
     branches:
       - main
@@ -16,5 +19,6 @@ jobs:
         run: |
           docker run --rm -v $(pwd):/project aquasec/trivy:latest \
             fs --scanners vuln,secret,misconfig \
+            --skip-dirs .git \
             --exit-code 1 \
             /project
