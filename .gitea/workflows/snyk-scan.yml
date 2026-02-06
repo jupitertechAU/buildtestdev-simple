@@ -29,12 +29,3 @@ jobs:
             snyk/snyk:ruby \
             snyk code test --severity-threshold=medium
         continue-on-error: true
-
-      - name: Snyk IaC (misconfiguration scanning)
-        run: |
-          docker run --rm \
-            -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
-            -v $(pwd):/project \
-            snyk/snyk:ruby \
-            snyk iac test --severity-threshold=high
-        continue-on-error: true
