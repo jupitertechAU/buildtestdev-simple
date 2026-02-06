@@ -451,7 +451,3 @@ origin  https://github.com/jupitertechAU/repo.git (push)
 - [ ] Create security incident response plan
 
 </details>
-### Trivy test
-1
-2 Sample codes removed
-3 updated trivy code
