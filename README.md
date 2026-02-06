@@ -453,3 +453,4 @@ origin  https://github.com/jupitertechAU/repo.git (push)
 </details>
 ### Trivy test
 1
+2 Sample codes (AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE and AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY)
