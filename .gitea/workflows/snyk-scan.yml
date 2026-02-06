@@ -1,0 +1,40 @@
+name: Snyk Security Scan
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  snyk-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Snyk Open Source (dependency vulnerabilities)
+        run: |
+          docker run --rm \
+            -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
+            -v $(pwd):/project \
+            snyk/snyk:ruby \
+            snyk test --file=Gemfile.lock --severity-threshold=high
+        continue-on-error: true
+
+      - name: Snyk Code (SAST - code quality & secrets)
+        run: |
+          docker run --rm \
+            -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
+            -v $(pwd):/project \
+            snyk/snyk:ruby \
+            snyk code test --severity-threshold=medium
+        continue-on-error: true
+
+      - name: Snyk IaC (misconfiguration scanning)
+        run: |
+          docker run --rm \
+            -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
+            -v $(pwd):/project \
+            snyk/snyk:ruby \
+            snyk iac test --severity-threshold=high
+        continue-on-error: true
