@@ -1,10 +1,11 @@
 name: Security Scan
-
 on:
+  push:
+    branches:
+      - dev
   pull_request:
     branches:
       - main
-
 jobs:
   security:
     runs-on: ubuntu-latest
@@ -14,11 +15,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Trivy comprehensive scan
         run: |
           docker run --rm -v $(pwd):/project aquasec/trivy:latest \
             fs --scanners vuln,secret,misconfig \
-            --severity HIGH,CRITICAL \
+            --skip-dirs .git \
             --exit-code 1 \
             /project
