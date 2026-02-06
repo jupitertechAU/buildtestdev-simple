@@ -453,3 +453,5 @@ origin  https://github.com/jupitertechAU/repo.git (push)
 </details>
 ### Trivy test
 1
+2 Sample codes removed
+3 updated trivy code
