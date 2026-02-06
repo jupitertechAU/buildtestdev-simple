@@ -1,0 +1,24 @@
+name: Security Scan (cached)
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Install Trivy CLI
+        uses: ankurk91/install-trivy-cli-action@v2
+        with:
+          version: latest
+          cache: true
+      
+      - name: Trivy comprehensive scan
+        run: trivy fs . --scanners vuln,secret,misconfig --exit-code 1
