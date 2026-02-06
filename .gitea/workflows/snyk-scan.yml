@@ -12,6 +12,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug - list files
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          echo "---"
+          ls -la Gemfile* || echo "No Gemfile found"
+
       - name: Snyk Open Source (dependency vulnerabilities)
         run: |
           docker run --rm \
