@@ -9,30 +9,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Debug - list files
+      - name: Install Snyk CLI
         run: |
-          echo "PWD: $(pwd)"
-          ls -la
-          echo "---"
-          ls -la Gemfile* || echo "No Gemfile found"
+          curl --compressed https://downloads.snyk.io/cli/stable/snyk-linux -o snyk
+          chmod +x ./snyk
+          sudo mv ./snyk /usr/local/bin/
 
-      - name: Snyk Open Source (dependency vulnerabilities)
-        run: |
-          docker run --rm \
-            -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
-            -v $(pwd):/app \
-            snyk/snyk:ruby \
-            snyk test --file=Gemfile.lock --severity-threshold=high
+      - name: Snyk Open Source
+        run: snyk test --all-projects --severity-threshold=high
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-      - name: Snyk Code (SAST - code quality & secrets)
-        run: |
-          docker run --rm \
-            -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
-            -v $(pwd):/app \
-            snyk/snyk:ruby \
-            snyk code test --severity-threshold=medium
+      - name: Snyk Code
+        run: snyk code test --severity-threshold=medium
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
