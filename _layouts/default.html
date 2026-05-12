@@ -1,36 +1,48 @@
----
----
-
 <!doctype html>
-{% include copyright.html %}
-<html lang="{{ site.locale | replace: "_", "-" | default: "en" }}" class="no-js">
-  <head>
-    {% include head.html %}
-    {% include head/custom.html %}
-  </head>
+<html lang="{{ site.locale | replace: '_', '-' | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
 
-  <body class="layout--{{ page.layout | default: layout.layout }}{% if page.classes or layout.classes %}{{ page.classes | default: layout.classes | join: ' ' | prepend: ' ' }}{% endif %}" dir="{% if site.rtl %}rtl{% else %}ltr{% endif %}">
-    {% include_cached skip-links.html %}
-    {% include_cached masthead.html %}
+  <title>{{ page.title | default: site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
 
-    <div class="initial-content">
-      {{ content }}
-      {% include after-content.html %}
-    </div>
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="{{ site.baseurl }}/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ site.baseurl }}/apple-touch-icon.png">
 
-    {% if site.search == true %}
-      <div class="search-content">
-        {% include_cached search/search_form.html %}
-      </div>
-    {% endif %}
+  {%- if site.pwa.enabled %}
+  <!-- PWA -->
+  <meta name="theme-color" content="{{ site.pwa.theme_color }}">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="{{ site.title }}">
+  <meta name="application-name" content="{{ site.name | default: site.title }}">
+  <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
+  {%- endif %}
 
-    <div id="footer" class="page__footer">
-      <footer>
-        {% include footer/custom.html %}
-        {% include_cached footer.html %}
-      </footer>
-    </div>
+  <!-- Open Graph (minimal) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ site.title }}">
+  <meta property="og:description" content="{{ site.description }}">
+  <meta property="og:url" content="{{ site.url }}{{ site.baseurl }}/">
+  {%- if site.logo %}
+  <meta property="og:image" content="{{ site.url }}{{ site.baseurl }}{{ site.logo }}">
+  {%- endif %}
+</head>
+<body>
+{{ content }}
 
-    {% include scripts.html %}
-  </body>
+{%- if site.pwa.enabled %}
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('{{ site.baseurl }}/sw.js');
+    });
+  }
+</script>
+{%- endif %}
+</body>
 </html>
