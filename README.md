@@ -1,15 +1,15 @@
-# BuildTest Development Workflow
+# BuildTest.dev
 
 <div align="center">
 
 ![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-success?style=for-the-badge)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-CDN-orange?style=for-the-badge)
-![Jekyll](https://img.shields.io/badge/Jekyll-4.3+-red?style=for-the-badge)
-![Security](https://img.shields.io/badge/Security-Automated-blue?style=for-the-badge)
+![Jekyll](https://img.shields.io/badge/Jekyll-GH%20Pages-red?style=for-the-badge)
+![Snyk](https://img.shields.io/badge/Snyk-Scanned-blue?style=for-the-badge)
 
-**Secure, automated development workflow with multi-stage deployment**
+**Private-Gitea-gated, GitHub-deployed Jekyll site.**
 
-[Live Site](https://buildtest.dev) • [Documentation](#workflow) • [Security](#security)
+[Live](https://buildtest.dev) · [Workflow](#workflow) · [Security](#security) · [Local Dev](#local-development)
 
 </div>
 
@@ -17,268 +17,49 @@
 
 ## Overview
 
-A security-first development workflow that combines private Gitea hosting with public GitHub deployment, featuring automated security scanning and intelligent cache management.
+Source of truth is a self-hosted Gitea instance which runs the security gate. Approved changes propagate to a public GitHub mirror, which GitHub Pages builds and deploys to `buildtest.dev`. Cloudflare fronts the live site and is purged on each deploy.
 
 ```mermaid
 graph LR
-    A[Local Dev] -->|Auto-push| B[Gitea Dev]
-    B -->|Pull Request| C[Security Scans]
-    C -->|Approved| D[Gitea Main]
-    D -->|Manual Push| E[GitHub]
-    E -->|Trigger| F[Cache Purge]
-    E -->|Deploy| G[Live Site]
-    style A fill:#e1f5ff
-    style C fill:#fff3cd
-    style G fill:#d4edda
+    A[feature branch] -->|push| B[Gitea]
+    B -->|pull request| C[Snyk scan]
+    C -->|approve| D[auto-merge]
+    D --> E[Gitea main]
+    E -->|mirror| F[GitHub main]
+    F --> G[GitHub Pages]
+    F -->|action| H[Cloudflare purge]
+    G --> I((buildtest.dev))
 ```
-
-### Key Features
-
-| Feature | Description |
-|---------|-------------|
-| **Security Gate** | Gitea acts as private security checkpoint before public release |
-| **Auto Scanning** | Trivy detects secrets, vulnerabilities, and misconfigurations |
-| **Smart Cache** | Cloudflare cache purges on deployment |
-| **Manual Control** | No automatic public deployments |
-| **Git Hooks** | Automated dev branch pushes |
-
----
-
-## Architecture
-
-<details open>
-<summary><b>Core Components</b></summary>
-
-```
-┌─────────────────┐
-│   Ubuntu VM     │
-│  (Development)  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐      ┌──────────────┐
-│  Gitea Server   │◄─────┤ Gitea Runner │
-│   (Private)     │      │   (Docker)   │
-└────────┬────────┘      └──────────────┘
-         │
-         ▼
-┌─────────────────┐      ┌──────────────┐
-│  GitHub Repo    │◄─────┤   Actions    │
-│   (Public)      │      │ Cache Purge  │
-└────────┬────────┘      └──────────────┘
-         │
-         ▼
-┌─────────────────┐
-│ GitHub Pages +  │
-│   Cloudflare    │
-│ buildtest.dev   │
-└─────────────────┘
-```
-
-### Technology Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Development** | Ubuntu VM + VS Code | Local development environment |
-| **Build** | Jekyll + Bundler | Static site generation |
-| **Primary Repo** | Self-hosted Gitea | Private development & security gate |
-| **Public Mirror** | GitHub | Deployment target |
-| **Hosting** | GitHub Pages | Static site hosting |
-| **CDN** | Cloudflare | DNS + caching + performance |
-| **CI/CD** | Gitea Actions + GitHub Actions | Automated workflows |
-
-</details>
 
 ---
 
 ## Workflow
 
-### Development Pipeline
+| # | Step | Where |
+|---|---|---|
+| 1 | Branch off `main`: `git checkout -b feature/<name>` | local |
+| 2 | Commit — pre-commit hook bumps the build counter; post-commit pushes the branch to Gitea | local + Gitea |
+| 3 | PR opened `feature → main` via Gitea API by a dedicated bot user, with a reviewer requested | Gitea |
+| 4 | Snyk scans run on `pull_request` (Open Source + Code) | Gitea Actions |
+| 5 | Reviewer approves on the **Files Changed** tab | Gitea |
+| 6 | PR auto-merges once approvals + checks pass (`merge_when_checks_succeed`) | Gitea |
+| 7 | `git pull gitea main && git push origin main` to mirror | local |
+| 8 | GitHub Pages builds; cache-purge Action invalidates Cloudflare | GitHub |
 
-```bash
-# Stage 1: Local Development
-┌─────────────────────────────────────┐
-│ 1. Edit code in VS Code             │
-│ 2. Jekyll auto-serves (localhost)   │
-│ 3. Commit to 'dev' branch           │
-│ 4. Auto-push to Gitea via git hook  │
-└─────────────────────────────────────┘
-                 ↓
-# Stage 2: Security Gate
-┌─────────────────────────────────────┐
-│ 5. Create PR: dev → main            │
-│ 6. Trivy scans for:                 │
-│    • Secrets & credentials          │
-│    • Dependency vulnerabilities     │
-│    • Configuration issues           │
-│ 7. Review & approve if clean        │
-│ 8. Merge to Gitea main              │
-└─────────────────────────────────────┘
-                 ↓
-# Stage 3: Public Deployment
-┌─────────────────────────────────────┐
-│ 9. Manual push to GitHub            │
-│ 10. GitHub Actions purges CF cache  │
-│ 11. GitHub Pages deploys            │
-│ 12. Live on buildtest.dev           │
-└─────────────────────────────────────┘
-```
-
-### Branch Strategy
-
-<table>
-<tr>
-<th>Branch</th>
-<th>Purpose</th>
-<th>Protection</th>
-<th>Automation</th>
-</tr>
-<tr>
-<td><code>dev</code></td>
-<td>Active development</td>
-<td>None</td>
-<td>Auto-push to Gitea</td>
-</tr>
-<tr>
-<td><code>main</code></td>
-<td>Production</td>
-<td>Requires PR approval</td>
-<td>Security scans on PR</td>
-</tr>
-</table>
+Direct pushes to `main` are restricted by branch protection on both remotes; all changes flow through PRs.
 
 ---
 
 ## Security
 
-<details>
-<summary><b>Multi-Layer Security Architecture</b></summary>
+| Layer | Tool | Trigger | What it does |
+|---|---|---|---|
+| Dependency scan | Snyk Open Source | every PR | scans `Gemfile.lock` for known CVEs |
+| Static analysis | Snyk Code | every PR | flags risky code patterns |
+| Branch protection | Gitea | always | 1 approval required, push whitelist enforced |
+| Secrets | Gitea Actions secrets | runtime | `SNYK_TOKEN`, `CF_API_TOKEN`, `CF_ZONE_ID` |
 
-### Automated Scanning
-
-| Tool | Purpose | Trigger | Action |
-|------|---------|---------|--------|
-| **Trivy** | Comprehensive security scanner | Every PR to `main` | Block merge if HIGH/CRITICAL issues found |
-
-**Trivy Scans For:**
-- **Secrets:** API keys, tokens, passwords, credentials
-- **Vulnerabilities:** Known CVEs in dependencies (Gemfile.lock)
-- **Misconfigurations:** Docker, IaC, and security config issues
-
-### Security Workflow
-
-```yaml
-┌──────────────────┐
-│  Code Changes    │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  Pull Request    │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│   Trivy Scan:    │
-│  • Secrets       │
-│  • Vulnerabilities│
-│  • Misconfig     │
-└────────┬─────────┘
-         │
-    ┌────┴────┐
-    │         │
- Issues   Clean
-    │         │
-    ▼         ▼
- Block    Approve
-           │
-           ▼
-      ┌────────┐
-      │ Merge  │
-      └────────┘
-```
-
-### Protection Mechanisms
-
-- **Direct Push Blocked** — No direct commits to `main` allowed
-- **Approval Required** — Minimum 1 reviewer must approve
-- **Private Gate** — Gitea reviews before public GitHub
-- **Manual Control** — No automatic GitHub mirroring
-- **Comprehensive Scanning** — Secrets, dependencies, and configurations checked
-
-</details>
-
----
-
-## Automation
-
-### Git Hooks
-
-**Post-Commit Hook**
-```bash
-# Automatically pushes dev branch to Gitea after every commit
-.git/hooks/post-commit
-```
-
-### Gitea Actions
-
-<details>
-<summary><b>Security Scanning Workflow</b></summary>
-
-**File:** `.gitea/workflows/trivy-scan.yml`
-
-**Triggers:** Pull requests to `main` branch
-
-**Actions:**
-- Checkout code
-- Run Trivy comprehensive scan
-  - Secret detection
-  - Dependency vulnerability scanning
-  - Misconfiguration detection
-- Report results
-- Block merge if HIGH or CRITICAL issues found
-
-**Scan Coverage:**
-- All repository files
-- `Gemfile.lock` for gem vulnerabilities
-- Configuration files for security issues
-- Detects exposed credentials and API keys
-
-</details>
-
-### GitHub Actions
-
-<details>
-<summary><b>Cloudflare Cache Purge Workflow</b></summary>
-
-**File:** `.github/workflows/purge-cloudflare.yml`
-
-**Triggers:** Push to `main` branch
-
-**Actions:**
-- Authenticate with Cloudflare API
-- Purge entire site cache
-- Ensure fresh content delivery
-
-**Secrets Required:**
-- `CF_ZONE_ID` — Cloudflare zone identifier
-- `CF_API_TOKEN` — API authentication token
-
-</details>
-
-### VS Code Integration
-
-**Auto-Serve Task** (`.vscode/tasks.json`)
-```json
-{
-  "label": "Jekyll Serve",
-  "type": "shell",
-  "command": "bundle exec jekyll serve --host 0.0.0.0",
-  "runOptions": {
-    "runOn": "folderOpen"
-  }
-}
-```
+Scan results post to the PR; high-severity findings appear in the run log even when the workflow exits green.
 
 ---
 
@@ -286,168 +67,73 @@ graph LR
 
 ### Prerequisites
 
-```bash
-# Required software
-Jekyll 4.3+
-Ruby 3.0+
-Bundler 2.0+
-Git 2.0+
-VS Code (recommended)
-```
+- Ruby (matching the version GitHub Pages uses)
+- Bundler
+- Git
 
-### Quick Start
+### Setup
 
 ```bash
-# 1. Clone repository
-git clone <gitea-url> buildtest-site
-cd buildtest-site
-
-# 2. Install dependencies
+git clone https://gitea.buildtest.dev/jekyll/buildtestdev-simple.git
+cd buildtestdev-simple
 bundle install
-
-# 3. Open in VS Code (auto-starts Jekyll)
-code .
-
-# 4. View local site
-open http://localhost:4000
+bundle exec jekyll serve --livereload
+# → http://localhost:4000
 ```
 
-### Git Remotes
+### Remotes
 
-```bash
-# View configured remotes
-git remote -v
-
-# Expected output:
-gitea   https://gitea.buildtest.dev/jekyll/repo.git (fetch)
-gitea   https://gitea.buildtest.dev/jekyll/repo.git (push)
-origin  https://github.com/jupitertechAU/repo.git (fetch)
-origin  https://github.com/jupitertechAU/repo.git (push)
+```
+origin  https://github.com/jupitertechAU/buildtestdev-simple   # public, GitHub Pages source
+gitea   https://gitea.buildtest.dev/jekyll/buildtestdev-simple # private, source of truth
 ```
 
-### Development Commands
+### Git Hooks
+
+| Hook | Action |
+|---|---|
+| `pre-commit` | Bumps `_data/version.yml` build counter, re-stages |
+| `post-commit` | `git push gitea <current-branch>` |
+
+### Common Commands
 
 | Command | Purpose |
-|---------|---------|
-| `bundle exec jekyll serve` | Start local development server |
-| `bundle exec jekyll build` | Build static site |
-| `git commit -m "message"` | Commit + auto-push to Gitea dev |
-| `git push origin main` | Manual push to GitHub (after merge) |
+|---|---|
+| `bundle exec jekyll serve --livereload` | Local dev server on `localhost:4000` |
+| `bundle exec jekyll build` | Static build into `_site/` |
+| `git checkout -b feature/<name>` | Start a change |
+| `git pull gitea main && git push origin main` | Mirror Gitea → GitHub after merge |
 
 ---
 
 ## Infrastructure
 
-### Hosting Stack
+| Component | Role |
+|---|---|
+| Gitea | private source of truth; PR gate; Actions runner |
+| GitHub | public mirror; GitHub Pages source |
+| GitHub Pages | static site build + serve |
+| Cloudflare | DNS, edge cache, TLS |
+| `purge-cloudflare.yml` | GitHub Action — purges Cloudflare cache on push to `main` |
 
 ```
-                ┌──────────────┐
-                │   Visitor    │
-                └──────┬───────┘
-                       │
-                       ▼
-                ┌──────────────┐
-                │  Cloudflare  │
-                │   CDN/Cache  │
-                └──────┬───────┘
-                       │
-                       ▼
-                ┌──────────────┐
-                │ GitHub Pages │
-                │buildtest.dev │
-                └──────────────┘
+visitor → Cloudflare (cache/TLS) → GitHub Pages → buildtest.dev
 ```
-
-### Component Details
-
-<table>
-<tr>
-<th>Component</th>
-<th>Details</th>
-</tr>
-<tr>
-<td><b>Gitea Server</b></td>
-<td>
-• Self-hosted on local infrastructure<br>
-• Private development repository<br>
-• Branch protection enabled<br>
-• Docker-based runner for Actions
-</td>
-</tr>
-<tr>
-<td><b>Development VM</b></td>
-<td>
-• Ubuntu 24.04 LTS<br>
-• VS Code with Jekyll extensions<br>
-• Auto-serve configuration<br>
-• Git hooks installed
-</td>
-</tr>
-<tr>
-<td><b>Cloudflare</b></td>
-<td>
-• DNS management<br>
-• CDN/edge caching<br>
-• API-based cache purging<br>
-• SSL/TLS encryption
-</td>
-</tr>
-<tr>
-<td><b>GitHub</b></td>
-<td>
-• Public mirror repository<br>
-• GitHub Pages hosting<br>
-• Actions for cache management<br>
-• Custom domain (buildtest.dev)
-</td>
-</tr>
-</table>
 
 ---
 
-## Progress Tracking
+## Repository Layout
 
-### Completed Tasks
-
-<details open>
-<summary><b>Development (5/5)</b></summary>
-
-- [x] Configure Gitea Actions for automated testing
-- [x] Set up Git hooks for automated Gitea pushes
-- [x] Configure VS Code auto-serve on folder open
-- [x] Establish branch protection with PR workflow
-- [x] Configure dual remote setup (Gitea + GitHub)
-
-</details>
-
-<details open>
-<summary><b>Security (4/4)</b></summary>
-
-- [x] Implement comprehensive security scanning with Trivy
-- [x] Configure automated scans on pull requests
-- [x] Set up Gitea as security gate before public mirror
-- [x] Establish manual deployment control to prevent auto-leaks
-
-</details>
-
-<details open>
-<summary><b>Infrastructure (3/3)</b></summary>
-
-- [x] Implement automatic Cloudflare cache purging on deployment
-- [x] Configure Cloudflare API integration via GitHub Actions
-- [x] Secure API token storage using GitHub secrets
-
-</details>
-
-### TODO
-
-<details>
-<summary><b>Security Enhancements (5 items)</b></summary>
-
-- [ ] Test Trivy scanner with sample credentials
-- [ ] Verify detection of secrets, vulnerabilities, and misconfigurations
-- [ ] Audit historical commits for accidentally leaked credentials
-- [ ] Document secret rotation procedures
-- [ ] Create security incident response plan
-
-</details>
+```
+.
+├── _config.yml              # Jekyll config (uses remote_theme: mmistakes/minimal-mistakes)
+├── _data/
+│   ├── services.yml         # Service catalog rendered on the homepage
+│   └── version.yml          # Auto-incrementing build counter (managed by pre-commit hook)
+├── _includes/  _layouts/  _sass/
+├── assets/icons/            # Service icons
+├── index.html               # Homepage (Liquid template)
+├── Gemfile / Gemfile.lock   # Pinned via github-pages gem
+├── .gitea/workflows/        # Gitea Actions (Snyk scan)
+└── .github/workflows/       # GitHub Actions (Cloudflare cache purge)
+```
