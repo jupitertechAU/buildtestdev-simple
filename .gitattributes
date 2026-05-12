@@ -1,0 +1,16 @@
+# Lockfiles must use LF — they're consumed by CI on Linux and CRLF causes
+# spurious whitespace churn / native-extension hash mismatches.
+Gemfile.lock text eol=lf
+*.lock       text eol=lf
+
+# Shell scripts and CI workflows: LF only.
+*.sh         text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+
+# Web sources: leave to git default text handling.
+*.html       text
+*.css        text
+*.scss       text
+*.js         text
+*.md         text
