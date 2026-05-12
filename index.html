@@ -3,304 +3,492 @@ layout: splash
 ---
 
 <style>
-/* Base */
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
-body {
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-  min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #fff;
-  -webkit-font-smoothing: antialiased;
+/* ============================================================
+   Design tokens
+   ============================================================ */
+:root {
+  --bg-grad-from:   #0f1424;
+  --bg-grad-to:     #1a2244;
+  --bg-radial:      rgba(60, 96, 220, 0.20);
+  --surface:        rgba(255, 255, 255, 0.045);
+  --surface-hi:     rgba(255, 255, 255, 0.08);
+  --border:         rgba(255, 255, 255, 0.10);
+  --border-hi:      rgba(255, 255, 255, 0.18);
+  --fg:             rgba(255, 255, 255, 0.96);
+  --fg-mute:        rgba(255, 255, 255, 0.62);
+  --fg-faint:       rgba(255, 255, 255, 0.38);
+  --accent:         #7aa6ff;
+  --accent-hi:      #aac6ff;
+  --shadow-tile:    0 1px 2px rgba(0,0,0,.25), 0 8px 22px rgba(0,0,0,.28);
+  --shadow-tile-hi: 0 2px 4px rgba(0,0,0,.30), 0 14px 36px rgba(0,0,0,.42);
+  --shadow-card:    0 1px 0 rgba(255,255,255,.05) inset, 0 24px 48px -12px rgba(0,0,0,.55);
+  --r-tile:         18px;
+  --r-card:         28px;
+  --r-pill:         999px;
+  --ease:           cubic-bezier(.22, 1, .36, 1);
+  --t-fast:         140ms;
+  --t-med:          220ms;
 }
 
-/* Container */
+/* ============================================================
+   Base
+   ============================================================ */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  color: var(--fg);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, var(--bg-radial), transparent 60%),
+    linear-gradient(180deg, var(--bg-grad-from) 0%, var(--bg-grad-to) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--accent); color: #0b1023; }
+
+/* ============================================================
+   Layout
+   ============================================================ */
 .app-container {
-  padding: 2rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
 }
 
-/* Hero Section */
-.hero-section {
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero {
   text-align: center;
-  margin-bottom: 3rem;
+  padding: 2rem 0 1.5rem;
 }
-
-.hero-title {
-  font-size: 2.5rem;
-  color: #fff;
-  margin-bottom: 0.5rem;
+.hero__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
   font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+  line-height: 1.05;
+}
+.hero__title img {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.35);
+}
+.hero__desc {
+  font-size: 0.98rem;
+  color: var(--fg-mute);
+  margin: 0 auto;
+  max-width: 36rem;
+  line-height: 1.45;
 }
 
-.hero-description {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 0;
+/* ============================================================
+   Sticky toolbar (search + filter chips)
+   ============================================================ */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin: 1.5rem -1rem 1.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(to bottom, rgba(15,20,36,0.92), rgba(15,20,36,0.55) 70%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
-/* Category Cards */
-.category-section {
-  margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 1rem 1.5rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--surface-hi);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--r-pill);
+  padding: 0.65rem 1.05rem;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
-
-.category-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-  margin-bottom: 1rem;
-  padding: 0 0.5rem;
-  color: rgba(255, 255, 255, 0.9);
-  text-transform: none;
-  border: none;
+.search:focus-within {
+  border-color: var(--accent);
+  background: rgba(122, 166, 255, 0.08);
+}
+.search__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-right: 0.6rem;
+  color: var(--fg-mute);
+  flex-shrink: 0;
+}
+.search input {
   background: transparent;
+  border: 0;
+  outline: 0;
+  width: 100%;
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.95rem;
+}
+.search input::placeholder { color: var(--fg-faint); }
+
+.chips {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.65rem 0 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  appearance: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--fg-mute);
+  padding: 0.38rem 0.85rem;
+  border-radius: var(--r-pill);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--t-fast) var(--ease);
+}
+.chip:hover { color: var(--fg); border-color: var(--border-hi); }
+.chip[aria-pressed="true"] {
+  background: var(--fg);
+  color: #0b1023;
+  border-color: var(--fg);
 }
 
-/* App Grid */
-.app-grid {
+/* ============================================================
+   Category cards (glass)
+   ============================================================ */
+.category {
+  margin: 0 0 1.25rem;
+  background: var(--surface);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 1.15rem 1.25rem 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .category { background: rgba(20, 26, 48, 0.85); backdrop-filter: none; }
+  .toolbar { background: rgba(15,20,36,0.97); backdrop-filter: none; }
+}
+
+.category__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin: 0 0 1rem;
+  padding: 0 0.25rem;
+}
+.category__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0;
+}
+.category__count {
+  font-size: 0.78rem;
+  color: var(--fg-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Tile grid
+   ============================================================ */
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 2rem 1.5rem;
-  padding: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+  gap: 1.25rem 0.5rem;
+  padding: 0.25rem;
 }
 
-@media (min-width: 768px) {
-  .app-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .app-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-}
-
-/* App Items */
-.app-item {
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
+.tile {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.2s ease;
-  cursor: pointer;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: inherit;
   position: relative;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease);
+  -webkit-tap-highlight-color: transparent;
 }
+.tile:hover { transform: translateY(-3px) scale(1.04); }
+.tile:active { transform: translateY(0) scale(0.96); transition-duration: 80ms; }
 
-.app-item:hover {
-  transform: scale(1.08);
-}
-
-/* App Icons */
-.app-icon {
-  width: 70px;
-  height: 70px;
-  margin-bottom: 0.5rem;
-  border-radius: 16px;
-  overflow: hidden;
+.tile__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--r-tile);
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.3);
-  transition: box-shadow 0.3s ease;
+  overflow: hidden;
+  box-shadow: var(--shadow-tile);
+  transition: box-shadow var(--t-med) var(--ease);
 }
-
-.app-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.tile:hover .tile__icon { box-shadow: var(--shadow-tile-hi); }
+.tile__icon img {
+  width: 100%; height: 100%;
   display: block;
+  object-fit: cover;
 }
 
-.app-item:hover .app-icon {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 12px 28px rgba(0,0,0,0.4);
-}
-
-/* App Names */
-.app-name {
-  font-size: 0.813rem;
+.tile__name {
+  font-size: 0.78rem;
   font-weight: 500;
-  color: #fff;
-  max-width: 90px;
   line-height: 1.2;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  text-align: center;
+  max-width: 96px;
+  color: var(--fg);
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+  word-break: break-word;
 }
 
-/* Tooltips */
-.app-tooltip {
+/* Disabled tile */
+.tile.is-disabled { cursor: default; }
+.tile.is-disabled:hover { transform: none; }
+.tile.is-disabled .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); filter: grayscale(70%); opacity: 0.55; }
+.tile.is-disabled:hover .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.tile.is-disabled .tile__name { color: var(--fg-faint); }
+
+.tile__badge {
   position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.95);
+  top: -4px;
+  right: 50%;
+  transform: translateX(36px);
+  background: rgba(255, 99, 99, 0.85);
   color: #fff;
-  padding: 0.5rem 0.75rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+
+/* ============================================================
+   Tooltip
+   ============================================================ */
+.tile__tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(10, 14, 28, 0.95);
+  color: var(--fg);
+  padding: 0.48rem 0.7rem;
   border-radius: 8px;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  min-width: 150px;
-  max-width: 250px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  width: max-content;
+  max-width: 220px;
   text-align: center;
   pointer-events: none;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  z-index: 100;
+  box-shadow: 0 6px 18px rgba(0,0,0,.5);
+  border: 1px solid var(--border-hi);
 }
+.tile:hover .tile__tip { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.app-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.95);
-}
-
-.app-item:hover .app-tooltip {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Disabled State */
-.app-item.disabled .app-icon {
-  opacity: 0.5;
-  filter: grayscale(50%);
-}
-
-.app-item.disabled .app-name {
-  opacity: 0.4;
-}
-
-/* Search Bar */
-.search-bar {
-  background: rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 0.875rem 1.25rem;
-  margin: 0 0 2rem;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-}
-
-.search-bar input {
-  background: transparent;
-  border: none;
-  color: #fff;
-  width: 100%;
-  font-size: 1rem;
-  outline: none;
-}
-
-.search-bar input::placeholder {
-  color: rgba(255,255,255,0.5);
-}
-
-/* Page Indicators */
-.page-indicators {
+/* ============================================================
+   Page dots (clickable scroll anchors)
+   ============================================================ */
+.dots {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-  margin: 3rem 0 2rem;
+  gap: 0.4rem;
+  margin: 2.5rem 0 1.5rem;
 }
-
-.page-dot {
-  width: 8px;
-  height: 8px;
+.dot {
+  width: 7px; height: 7px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transition: all 0.3s;
+  background: var(--border-hi);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease);
+}
+.dot:hover { background: var(--fg-mute); transform: scale(1.3); }
+.dot[aria-current="true"] {
+  background: var(--fg);
+  width: 22px;
+  border-radius: 4px;
 }
 
-.page-dot.active {
-  background: rgba(255,255,255,0.9);
-  width: 24px;
-  border-radius: 4px;
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  text-align: center;
+  color: var(--fg-faint);
+  font-size: 0.72rem;
+  padding: 1rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Filter state — chips toggle visibility
+   ============================================================ */
+.app-container[data-filter="active"]   .category[data-state="deprecated"] { display: none; }
+.app-container[data-filter="deprecated"] .category[data-state="active"]   { display: none; }
+
+/* ============================================================
+   Search-hidden state (set by JS)
+   ============================================================ */
+.tile[hidden] { display: none; }
+.category[hidden] { display: none; }
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
 }
 </style>
 
-<div class="app-container">
-  <!-- Hero Section -->
-  <div class="hero-section">
-    <h1 class="hero-title">
-      {% if site.logo %}
-      <img src="{{ site.baseurl }}{{ site.logo }}" alt="{{ site.title }} icon" style="width: 2.5rem; height: 2.5rem; vertical-align: middle; margin-right: 0.5rem;">
-      {% endif %}
+<div class="app-container" data-filter="all">
+
+  <!-- Hero -->
+  <header class="hero">
+    <h1 class="hero__title">
+      {%- if site.logo %}<img src="{{ site.baseurl }}{{ site.logo }}" alt="">{% endif -%}
       {{ site.title }}
     </h1>
-    <p class="hero-description">{{ site.description }}</p>
-  </div>
+    <p class="hero__desc">{{ site.description }}</p>
+  </header>
 
-  <!-- Search Bar -->
-  <div class="search-bar">
-    <input type="text" placeholder="🔍 Search services" id="appSearch">
-  </div>
-
-  {% for category in site.data.services.categories %}
-  <div class="category-section">
-    <h2 class="category-title">{{ category.name }}</h2>
-    
-    <div class="app-grid">
-      {% for service in category.services %}
-      {% if service.url %}
-      <a href="{{ service.url }}" class="app-item" target="_blank" data-name="{{ service.name | downcase }}" data-desc="{{ service.description | downcase }}">
-        <div class="app-icon">
-          <img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy">
-        </div>
-        <div class="app-name">{{ service.name }}</div>
-        <div class="app-tooltip">{{ service.description }}</div>
-      </a>
-      {% else %}
-      <div class="app-item disabled" data-name="{{ service.name | downcase }}" data-desc="{{ service.description | downcase }}">
-        <div class="app-icon">
-          <img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy">
-        </div>
-        <div class="app-name">{{ service.name }}</div>
-        <div class="app-tooltip">{{ service.description }}</div>
-      </div>
-      {% endif %}
-      {% endfor %}
+  <!-- Sticky toolbar: search + filter chips -->
+  <div class="toolbar">
+    <div class="search">
+      <svg class="search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </svg>
+      <input type="search" id="q" placeholder="Search services" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="chips" role="tablist" aria-label="Filter services">
+      <button class="chip" type="button" data-filter="all"        aria-pressed="true">All</button>
+      <button class="chip" type="button" data-filter="active"     aria-pressed="false">Active</button>
+      <button class="chip" type="button" data-filter="deprecated" aria-pressed="false">Deprecated</button>
     </div>
   </div>
+
+  <!-- Categories -->
+  {% for category in site.data.services.categories %}
+    {%- assign cat_id = category.name | slugify -%}
+    {%- if category.name == 'Deprecated' -%}
+      {%- assign cat_state = 'deprecated' -%}
+    {%- else -%}
+      {%- assign cat_state = 'active' -%}
+    {%- endif -%}
+  <section class="category" id="cat-{{ cat_id }}" data-state="{{ cat_state }}" data-name="{{ category.name | downcase }}">
+    <header class="category__head">
+      <h2 class="category__title">{{ category.name }}</h2>
+      <span class="category__count">{{ category.services | size }}</span>
+    </header>
+    <div class="grid">
+      {% for service in category.services %}
+        {%- assign tag = 'a' -%}
+        {%- assign extra = '' -%}
+        {%- if service.url -%}
+          {%- assign extra = ' href="' | append: service.url | append: '" target="_blank" rel="noopener"' -%}
+        {%- else -%}
+          {%- assign tag = 'div' -%}
+        {%- endif -%}
+      <{{ tag }} class="tile{% unless service.url %} is-disabled{% endunless %}"
+        data-name="{{ service.name | downcase }}"
+        data-desc="{{ service.description | downcase }}"{{ extra }}>
+        <div class="tile__icon"><img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy" decoding="async"></div>
+        <div class="tile__name">{{ service.name }}</div>
+        {%- unless service.url %}<span class="tile__badge">Deprecated</span>{% endunless %}
+        <div class="tile__tip" role="tooltip">{{ service.description }}</div>
+      </{{ tag }}>
+      {% endfor %}
+    </div>
+  </section>
   {% endfor %}
 
-  <div class="page-indicators">
+  <!-- Page dots: clickable scroll anchors -->
+  <nav class="dots" aria-label="Jump to category">
     {% for category in site.data.services.categories %}
-    <div class="page-dot{% if forloop.first %} active{% endif %}"></div>
+      {%- assign cat_id = category.name | slugify -%}
+    <button class="dot" type="button" data-target="cat-{{ cat_id }}"
+      aria-label="Go to {{ category.name }}"{% if forloop.first %} aria-current="true"{% endif %}></button>
     {% endfor %}
-  </div>
+  </nav>
 
-  <div style="text-align:center;color:rgba(255,255,255,0.4);font-size:0.75rem;padding:1rem 0;">
-    Build #{{ site.data.version.build }}
-  </div>
+  <div class="footer">Build #{{ site.data.version.build }}</div>
+
 </div>
 
 <script>
-const searchInput = document.getElementById('appSearch');
-const appItems = document.querySelectorAll('.app-item');
-const categorySections = document.querySelectorAll('.category-section');
+(() => {
+  const root      = document.querySelector('.app-container');
+  const q         = document.getElementById('q');
+  const tiles     = [...document.querySelectorAll('.tile')];
+  const sections  = [...document.querySelectorAll('.category')];
+  const chips     = [...document.querySelectorAll('.chip')];
+  const dots      = [...document.querySelectorAll('.dot')];
 
-searchInput.addEventListener('input', function(e) {
-  const searchTerm = e.target.value.toLowerCase();
-  
-  appItems.forEach(app => {
-    const name = app.dataset.name || '';
-    const desc = app.dataset.desc || '';
-    const matches = name.includes(searchTerm) || desc.includes(searchTerm);
-    app.style.display = matches ? 'flex' : 'none';
+  // -------- Search (debounced) --------
+  let raf = 0;
+  q.addEventListener('input', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const term = q.value.trim().toLowerCase();
+      tiles.forEach(t => {
+        const hit = !term || (t.dataset.name + ' ' + t.dataset.desc).includes(term);
+        t.hidden = !hit;
+      });
+      sections.forEach(s => {
+        s.hidden = !s.querySelector('.tile:not([hidden])');
+      });
+    });
   });
-  
-  categorySections.forEach(section => {
-    const visibleApps = section.querySelectorAll('.app-item[style="display: flex;"], .app-item:not([style])');
-    section.style.display = visibleApps.length > 0 ? 'block' : 'none';
-  });
-});
+
+  // -------- Filter chips --------
+  chips.forEach(c => c.addEventListener('click', () => {
+    chips.forEach(x => x.setAttribute('aria-pressed', x === c));
+    root.dataset.filter = c.dataset.filter;
+  }));
+
+  // -------- Page dots --------
+  dots.forEach(d => d.addEventListener('click', () => {
+    document.getElementById(d.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+
+  // -------- Active dot follows scroll --------
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = e.target.id;
+        dots.forEach(d => d.toggleAttribute('aria-current', d.dataset.target === id));
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => io.observe(s));
+  }
+})();
 </script>
