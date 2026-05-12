@@ -260,12 +260,18 @@ body {
   word-break: break-word;
 }
 
-/* Disabled tile */
-.tile.is-disabled { cursor: default; }
-.tile.is-disabled:hover { transform: none; }
-.tile.is-disabled .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); filter: grayscale(70%); opacity: 0.55; }
-.tile.is-disabled:hover .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); }
-.tile.is-disabled .tile__name { color: var(--fg-faint); }
+/* Deprecated tile (Deprecated category only): faded + badge */
+.tile.is-deprecated { cursor: default; }
+.tile.is-deprecated:hover { transform: none; }
+.tile.is-deprecated .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); filter: grayscale(70%); opacity: 0.55; }
+.tile.is-deprecated:hover .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.tile.is-deprecated .tile__name { color: var(--fg-faint); }
+
+/* Info-only tile (no URL but not deprecated, e.g. Backend Services):
+   non-clickable, full color, no hover lift */
+.tile.is-info { cursor: default; }
+.tile.is-info:hover { transform: none; }
+.tile.is-info:hover .tile__icon { box-shadow: var(--shadow-tile); }
 
 .tile__badge {
   position: absolute;
@@ -412,17 +418,23 @@ body {
       {% for service in category.services %}
         {%- assign tag = 'a' -%}
         {%- assign extra = '' -%}
+        {%- assign tile_state = '' -%}
         {%- if service.url -%}
           {%- assign extra = ' href="' | append: service.url | append: '" target="_blank" rel="noopener"' -%}
         {%- else -%}
           {%- assign tag = 'div' -%}
         {%- endif -%}
-      <{{ tag }} class="tile{% unless service.url %} is-disabled{% endunless %}"
+        {%- if cat_state == 'deprecated' -%}
+          {%- assign tile_state = ' is-deprecated' -%}
+        {%- elsif service.url == nil -%}
+          {%- assign tile_state = ' is-info' -%}
+        {%- endif -%}
+      <{{ tag }} class="tile{{ tile_state }}"
         data-name="{{ service.name | downcase }}"
         data-desc="{{ service.description | downcase }}"{{ extra }}>
         <div class="tile__icon"><img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy" decoding="async"></div>
         <div class="tile__name">{{ service.name }}</div>
-        {%- unless service.url %}<span class="tile__badge">Deprecated</span>{% endunless %}
+        {%- if cat_state == 'deprecated' %}<span class="tile__badge">Deprecated</span>{% endif %}
         <div class="tile__tip" role="tooltip">{{ service.description }}</div>
       </{{ tag }}>
       {% endfor %}
