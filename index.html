@@ -267,6 +267,14 @@ body {
 .tile.is-deprecated:hover .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); }
 .tile.is-deprecated .tile__name { color: var(--fg-faint); }
 
+/* Stopped tile: faded but softer than deprecated — could come back */
+.tile.is-stopped { cursor: default; }
+.tile.is-stopped:hover { transform: none; }
+.tile.is-stopped .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); filter: grayscale(45%); opacity: 0.75; }
+.tile.is-stopped:hover .tile__icon { box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.tile.is-stopped .tile__name { color: var(--fg-mute); }
+.tile.is-stopped .tile__badge { background: rgba(210, 145, 35, 0.85); }
+
 /* Info-only tile (no URL but not deprecated, e.g. Backend Services):
    non-clickable, full color, no hover lift */
 .tile.is-info { cursor: default; }
@@ -353,8 +361,12 @@ body {
 /* ============================================================
    Filter state — chips toggle visibility
    ============================================================ */
-.app-container[data-filter="active"]   .category[data-state="deprecated"] { display: none; }
-.app-container[data-filter="deprecated"] .category[data-state="active"]   { display: none; }
+.app-container[data-filter="active"]     .category[data-state="stopped"]    { display: none; }
+.app-container[data-filter="active"]     .category[data-state="deprecated"] { display: none; }
+.app-container[data-filter="stopped"]    .category[data-state="active"]     { display: none; }
+.app-container[data-filter="stopped"]    .category[data-state="deprecated"] { display: none; }
+.app-container[data-filter="deprecated"] .category[data-state="active"]     { display: none; }
+.app-container[data-filter="deprecated"] .category[data-state="stopped"]    { display: none; }
 
 /* ============================================================
    Search-hidden state (set by JS)
@@ -397,6 +409,7 @@ body {
     <div class="chips" role="tablist" aria-label="Filter services">
       <button class="chip" type="button" data-filter="all"        aria-pressed="true">All</button>
       <button class="chip" type="button" data-filter="active"     aria-pressed="false">Active</button>
+      <button class="chip" type="button" data-filter="stopped"    aria-pressed="false">Stopped</button>
       <button class="chip" type="button" data-filter="deprecated" aria-pressed="false">Deprecated</button>
     </div>
   </div>
@@ -406,6 +419,8 @@ body {
     {%- assign cat_id = category.name | slugify -%}
     {%- if category.name == 'Deprecated' -%}
       {%- assign cat_state = 'deprecated' -%}
+    {%- elsif category.name == 'Stopped' -%}
+      {%- assign cat_state = 'stopped' -%}
     {%- else -%}
       {%- assign cat_state = 'active' -%}
     {%- endif -%}
@@ -424,8 +439,14 @@ body {
         {%- else -%}
           {%- assign tag = 'div' -%}
         {%- endif -%}
+        {%- if cat_state == 'deprecated' or cat_state == 'stopped' -%}
+          {%- assign tag = 'div' -%}
+          {%- assign extra = '' -%}
+        {%- endif -%}
         {%- if cat_state == 'deprecated' -%}
           {%- assign tile_state = ' is-deprecated' -%}
+        {%- elsif cat_state == 'stopped' -%}
+          {%- assign tile_state = ' is-stopped' -%}
         {%- elsif service.url == nil -%}
           {%- assign tile_state = ' is-info' -%}
         {%- endif -%}
@@ -435,6 +456,7 @@ body {
         <div class="tile__icon"><img src="{{ service.icon }}" alt="{{ service.name }}" loading="lazy" decoding="async"></div>
         <div class="tile__name">{{ service.name }}</div>
         {%- if cat_state == 'deprecated' %}<span class="tile__badge">Deprecated</span>{% endif %}
+        {%- if cat_state == 'stopped' %}<span class="tile__badge">Stopped</span>{% endif %}
         <div class="tile__tip" role="tooltip">{{ service.description }}</div>
       </{{ tag }}>
       {% endfor %}
