@@ -25,8 +25,8 @@ categories:
         description: "Modern publishing platform"
         url: "https://localghost.buildtest.dev"
       - name: "n8n"
-        icon: "/assets/icons/placeholder.png"
-        description: "Auto-added from container n8n (n8nio/n8n) - please review"
+        icon: "/assets/icons/n8n-icon.png"
+        description: "Workflow automation platform"
         url: "https://n8n.buildtest.dev"
 
   - name: "Stopped"
