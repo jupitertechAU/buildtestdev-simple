@@ -31,17 +31,19 @@ categories:
       - name: "Dozzle"
         icon: "/assets/icons/dozzle-icon.png"
         description: "Docker container log viewer"
+        url: "https://dozzle.buildtest.dev"
       - name: "Uptime Kuma"
         icon: "/assets/icons/uptimekuma-icon.png"
         description: "Service uptime monitoring"
-
-  - name: "Stopped"
-    services:
+        url: "https://uptimekuma.buildtest.dev"
       - name: "Nginx Proxy Manager"
         icon: "/assets/icons/npm-icon.png"
         description: "GUI reverse proxy manager"
         url: "https://dozzle.buildtest.dev"
         url: "https://uptimekuma.buildtest.dev"
+
+  - name: "Stopped"
+    services:
       - name: "GoAccess"
         icon: "/assets/icons/goaccess-icon.png"
         description: "Web log analyser for NPM"
