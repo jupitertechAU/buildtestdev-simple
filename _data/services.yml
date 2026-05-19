@@ -28,18 +28,20 @@ categories:
         icon: "/assets/icons/n8n-icon.png"
         description: "Workflow automation platform"
         url: "https://n8n.buildtest.dev"
-
-  - name: "Stopped"
-    services:
-      - name: "Nginx Proxy Manager"
-        icon: "/assets/icons/npm-icon.png"
-        description: "GUI reverse proxy manager"
       - name: "Dozzle"
         icon: "/assets/icons/dozzle-icon.png"
         description: "Docker container log viewer"
       - name: "Uptime Kuma"
         icon: "/assets/icons/uptimekuma-icon.png"
         description: "Service uptime monitoring"
+
+  - name: "Stopped"
+    services:
+      - name: "Nginx Proxy Manager"
+        icon: "/assets/icons/npm-icon.png"
+        description: "GUI reverse proxy manager"
+        url: "https://dozzle.buildtest.dev"
+        url: "https://uptimekuma.buildtest.dev"
       - name: "GoAccess"
         icon: "/assets/icons/goaccess-icon.png"
         description: "Web log analyser for NPM"
