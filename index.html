@@ -369,6 +369,33 @@ body {
 .app-container[data-filter="deprecated"] .category[data-state="stopped"]    { display: none; }
 
 /* ============================================================
+   Empty filter state
+   ============================================================ */
+.empty-state {
+  display: none;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--fg-mute);
+}
+.empty-state.is-visible { display: block; }
+.empty-state__icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+.empty-state__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0 0 0.35rem;
+}
+.empty-state__desc {
+  font-size: 0.88rem;
+  margin: 0;
+  color: var(--fg-faint);
+}
+
+/* ============================================================
    Search-hidden state (set by JS)
    ============================================================ */
 .tile[hidden] { display: none; }
@@ -464,6 +491,13 @@ body {
   </section>
   {% endfor %}
 
+  <!-- Empty-state message (shown when active filter/search has zero visible tiles) -->
+  <div class="empty-state" id="emptyState" role="status" aria-live="polite">
+    <div class="empty-state__icon" aria-hidden="true">🗂️</div>
+    <p class="empty-state__title" id="emptyTitle">No services to show</p>
+    <p class="empty-state__desc" id="emptyDesc">Try a different filter or clear your search.</p>
+  </div>
+
   <!-- Page dots: clickable scroll anchors -->
   <nav class="dots" aria-label="Jump to category">
     {% for category in site.data.services.categories %}
@@ -485,6 +519,31 @@ body {
   const sections  = [...document.querySelectorAll('.category')];
   const chips     = [...document.querySelectorAll('.chip')];
   const dots      = [...document.querySelectorAll('.dot')];
+  const emptyEl   = document.getElementById('emptyState');
+  const emptyTitle = document.getElementById('emptyTitle');
+  const emptyDesc  = document.getElementById('emptyDesc');
+
+  const EMPTY_COPY = {
+    stopped:    { title: 'No stopped services',    desc: 'Nothing is currently stopped — all good.' },
+    deprecated: { title: 'No deprecated services', desc: 'Nothing has been retired.' },
+    active:     { title: 'No active services',     desc: 'Try the All filter.' },
+    all:        { title: 'No services to show',    desc: 'Try clearing your search.' },
+  };
+
+  // Show/hide empty-state based on whether any tile is currently visible.
+  // A tile is "visible" when not hidden by search AND its category isn't hidden by the filter CSS.
+  const refreshEmpty = () => {
+    const anyVisible = tiles.some(t =>
+      !t.hidden && t.closest('.category').offsetParent !== null
+    );
+    const filter = root.dataset.filter || 'all';
+    emptyEl.classList.toggle('is-visible', !anyVisible);
+    if (!anyVisible) {
+      const copy = EMPTY_COPY[filter] || EMPTY_COPY.all;
+      emptyTitle.textContent = copy.title;
+      emptyDesc.textContent  = q.value.trim() ? `No matches for "${q.value.trim()}".` : copy.desc;
+    }
+  };
 
   // -------- Search (debounced) --------
   let raf = 0;
@@ -499,6 +558,7 @@ body {
       sections.forEach(s => {
         s.hidden = !s.querySelector('.tile:not([hidden])');
       });
+      refreshEmpty();
     });
   });
 
@@ -506,6 +566,7 @@ body {
   chips.forEach(c => c.addEventListener('click', () => {
     chips.forEach(x => x.setAttribute('aria-pressed', x === c));
     root.dataset.filter = c.dataset.filter;
+    refreshEmpty();
   }));
 
   // -------- Page dots --------
